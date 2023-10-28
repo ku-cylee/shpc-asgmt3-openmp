@@ -19,7 +19,19 @@ void matmul_singlethread(float *A, float *B, float *C, size_t M, size_t N, size_
 void matmul(const float *A, const float *B, float *C, int M, int N, int K,
             int num_threads) {
   // Naive single-threaded matmul implementation
-  matmul_singlethread(A, B, C, M, N, K);
+  // matmul_singlethread(A, B, C, M, N, K);
 
   // TODO: Implement multi-threaded matmul
+  #pragma omp parallel num_threads(num_threads)
+  {
+    #pragma omp for
+    for (int i = 0; i < M; i++) {
+      for (int k = 0; k < K; k++) {
+        float a = A[i * K + k];
+        for (int j = 0; j < N; j++) {
+          C[i * N + j] += a * B[k * N + j];
+        }
+      }
+    }
+  }
 }
